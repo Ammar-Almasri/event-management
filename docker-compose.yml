@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  event-mysql:
+    image: mariadb:10.8.3
+    container_name: event-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3310:3306
+    volumes:
+      - event-mysql-data:/var/lib/mysql
+
+  event-adminer:
+    image: adminer
+    container_name: event-adminer
+    restart: always
+    ports:
+      - 8082:8080
+
+volumes:
+  event-mysql-data:
