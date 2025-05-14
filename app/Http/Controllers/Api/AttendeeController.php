@@ -30,12 +30,13 @@ class AttendeeController extends Controller
      */
     public function store(Request $request, Event $event)
     {
-
         $attendee = $event->attendees()->create([
             'user_id' => 1,
         ]);
 
-        return new AttendeeResource($this->loadRelationships($attendee));
+        $attendee = $this->loadRelationships($attendee);
+
+        return new AttendeeResource($attendee);
     }
 
     /**
