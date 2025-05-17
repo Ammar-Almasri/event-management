@@ -7,6 +7,7 @@ use App\Http\Requests\Events\StoreEventRequest;
 use App\Http\Requests\Events\UpdateEventRequest;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
+use \Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use App\Http\Traits\CanLoadRelationships;
 
@@ -16,6 +17,10 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function __construct() {
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
 
     private array $allowed = ['user', 'attendees', 'attendees.user'];
     public function index()
@@ -35,7 +40,7 @@ class EventController extends Controller
     public function store(StoreEventRequest $request)
     {
         $data = $request->validated();
-        $data['user_id'] = 1; // fixed user for testing
+        $data['user_id'] = auth()->id();
 
         $event = Event::create($data);
 
@@ -55,6 +60,8 @@ class EventController extends Controller
      */
     public function update(UpdateEventRequest $request, Event $event)
     {
+        $this->authorize('update-event', $event);
+
         $data = $request->validated();
 
         $event->update($data);
@@ -67,6 +74,8 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
+        $this->authorize('delete-event', $event);
+
         $event->delete();
 
         return response(status:204);
