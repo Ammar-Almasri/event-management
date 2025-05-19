@@ -36,7 +36,7 @@ class AttendeeController extends Controller
     public function store(Request $request, Event $event)
     {
         $attendee = $event->attendees()->create([
-            'user_id' => 1,
+            'user_id' => $request->user()->id,
         ]);
 
         $attendee = $this->loadRelationships($attendee);
@@ -65,7 +65,7 @@ class AttendeeController extends Controller
      */
     public function destroy(Event $event, Attendee $attendee)
     {
-        $this->authorize('delete-attendee',[$event, $attendee]);
+        //$this->authorize('delete-attendee',[$event, $attendee]);
         $attendee->delete();
 
         return response(status: 204);
